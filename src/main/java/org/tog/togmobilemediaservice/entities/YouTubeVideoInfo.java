@@ -7,27 +7,23 @@ import org.tog.togmobilemediaservice.enums.Production;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 
 @Entity(name = "youtube_video_info")
 @Data
 @EqualsAndHashCode
 public class YouTubeVideoInfo {
 
+    @Id
     @Column(name = "id")
     private String id;
 
-    @Type(type = "jsonb")
-    @Column(name = "tags")
-    private String tags;
+    @Column(name = "title")
+    private String title;
 
-    @Type(type = "jsonb")
-    @Column(name = "snippet")
-    private String snippet;
+    @Column(name = "description")
+    private String description;
 
-    @Type(type = "jsonb")
-    @Column(name = "file_details")
-    private String fileDetails;
-
-    @Column(name = "production")
-    private Production production;
+    @Column(name = "publish_date")
+    private String publishDate;
 }

@@ -6,9 +6,9 @@ import lombok.Data;
 public class YouTubeVideoInfoDto {
     private String id;
 
-    private String tags;
+    private String title;
 
-    private YouTubeVideoSnippet snippet;
+    private String description;
 
-    private FileDetails fileDetails;
+    private String publishDate;
 }
