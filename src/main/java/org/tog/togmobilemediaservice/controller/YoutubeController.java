@@ -1,12 +1,12 @@
 package org.tog.togmobilemediaservice.controller;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.tog.togmobilemediaservice.dto.YouTubeVideoInfoDto;
+import org.springframework.web.bind.annotation.*;
+import org.tog.togmobilemediaservice.dto.YoutubeVideoDataDto;
+import org.tog.togmobilemediaservice.dto.YoutubeVideoInfoDto;
+import org.tog.togmobilemediaservice.dto.YoutubeSearchRequestDto;
 import org.tog.togmobilemediaservice.service.VideoService;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -19,9 +19,15 @@ public class YoutubeController {
         this.videoService = videoService;
     }
 
-    @GetMapping(value = "/")
-    public List<YouTubeVideoInfoDto> getUserInfo() {
-        List<YouTubeVideoInfoDto> youTubeVideoInfoList = videoService.getVideoInfoFromYoutube();
+    @PostMapping(value = "/search")
+    public List<YoutubeVideoInfoDto> search(@RequestBody YoutubeSearchRequestDto youtubeSearchRequestDto) {
+        List<YoutubeVideoInfoDto> youTubeVideoInfoList = videoService.search(youtubeSearchRequestDto);
        return youTubeVideoInfoList;
+    }
+
+    @PostMapping(value = "/data")
+    public List<YoutubeVideoDataDto> data(@RequestBody YoutubeSearchRequestDto youtubeSearchRequestDto) {
+        List<YoutubeVideoDataDto> youtubeVideoDataDtos = videoService.fetchVideoData(Collections.EMPTY_LIST);
+        return youtubeVideoDataDtos;
     }
 }

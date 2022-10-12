@@ -3,7 +3,7 @@ package org.tog.togmobilemediaservice.dto;
 import lombok.Data;
 
 @Data
-public class YouTubeVideoInfoDto {
+public class YoutubeVideoInfoDto {
     private String id;
 
     private String title;

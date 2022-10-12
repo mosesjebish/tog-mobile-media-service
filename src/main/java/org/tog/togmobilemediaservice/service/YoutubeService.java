@@ -1,10 +1,12 @@
 package org.tog.togmobilemediaservice.service;
 
-import org.tog.togmobilemediaservice.dto.YouTubeVideoInfoDto;
-import org.tog.togmobilemediaservice.entities.YouTubeVideoInfo;
+import com.google.api.client.util.DateTime;
+import org.tog.togmobilemediaservice.dto.YoutubeVideoDataDto;
+import org.tog.togmobilemediaservice.dto.YoutubeVideoInfoDto;
 
 import java.util.List;
 
 public interface YoutubeService {
-    public List<YouTubeVideoInfoDto> searchVideosByChannel();
+    public List<YoutubeVideoInfoDto> searchVideosByChannel(DateTime from, DateTime to);
+    List<YoutubeVideoDataDto> fetchVideoData(List<YoutubeVideoInfoDto> youtubeVideoInfoDtos);
 }
