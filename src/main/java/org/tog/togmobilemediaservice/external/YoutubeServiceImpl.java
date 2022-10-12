@@ -1,4 +1,4 @@
-package org.tog.togmobilemediaservice.service;
+package org.tog.togmobilemediaservice.external;
 
 import com.google.api.client.util.DateTime;
 import com.google.api.services.youtube.YouTube;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class YoutubeServiceImpl implements YoutubeService{
-    public List<YoutubeVideoInfoDto> searchVideosByChannel(DateTime from, DateTime to) {
+    public List<YoutubeVideoInfoDto> searchVideosByDate(DateTime from, DateTime to) {
         List<YoutubeVideoInfoDto> videos = new ArrayList<YoutubeVideoInfoDto>();
 
         try {
@@ -48,8 +48,6 @@ public class YoutubeServiceImpl implements YoutubeService{
                 search.setPublishedAfter(to);
             }
 
-            DateFormat df = new SimpleDateFormat("MMM dd, yyyy");
-
             //perform the search and parse the results
             SearchListResponse searchResponse = search.execute();
             List<SearchResult> searchResultList = searchResponse.getItems();
@@ -62,9 +60,8 @@ public class YoutubeServiceImpl implements YoutubeService{
                         video.setTitle(result.getSnippet().getTitle());
                     }
                     DateTime dateTime = result.getSnippet().getPublishedAt();
-                    Date date = new Date(dateTime.getValue());
-                    String dateString = df.format(date);
-                    video.setPublishDate(dateString);
+                    Date publishDate = new Date(dateTime.getValue());
+                    video.setPublishDate(publishDate);
                     videos.add(video);
                 }
             }
@@ -101,16 +98,20 @@ public class YoutubeServiceImpl implements YoutubeService{
                 response.getItems().forEach(anItem -> {
                     YoutubeVideoDataDto dto = new YoutubeVideoDataDto();
                     dto.setId(anItem.getId());
+                    dto.setVideoUrl(YoutubeHelper.buildVideoUrl(anItem.getId()));
+                    if(anItem.getSnippet() != null){
                     dto.setTitle(anItem.getSnippet().getTitle());
-                    dto.setTags(anItem.getSnippet().getTags().toArray(new String[0]));
+                    if(anItem.getSnippet().getTags().size() > 0){
+                    dto.setTags(String.join(",",anItem.getSnippet().getTags()));
+                    }
                     dto.setDescription(anItem.getSnippet().getDescription());
                     dto.setPublishedAt(anItem.getSnippet().getPublishedAt().toString());
-                    dto.setVideoUrl(YoutubeHelper.buildVideoUrl(anItem.getId()));
                     dto.setThumbnailDefault(anItem.getSnippet().getThumbnails().getDefault().getUrl());
                     dto.setThumbnailMax(anItem.getSnippet().getThumbnails().getMaxres().getUrl());
                     dto.setThumbnailHigh(anItem.getSnippet().getThumbnails().getHigh().getUrl());
                     dto.setThumbnailMedium(anItem.getSnippet().getThumbnails().getMedium().getUrl());
                     dto.setThumbnailStandard(anItem.getSnippet().getThumbnails().getStandard().getUrl());
+                    }
 
                     youtubeVideoDataResponseDtos.add(dto);
                 });

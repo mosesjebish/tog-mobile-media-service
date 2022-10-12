@@ -1,8 +1,11 @@
 package org.tog.togmobilemediaservice.dto;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class YoutubeVideoDataDto {
     private String id;
     private String title;
@@ -14,5 +17,5 @@ public class YoutubeVideoDataDto {
     private String thumbnailMedium;
     private String thumbnailHigh;
     private String thumbnailStandard;
-    private String[] tags;
+    private String tags;
 }

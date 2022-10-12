@@ -2,6 +2,8 @@ package org.tog.togmobilemediaservice.dto;
 
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class YoutubeVideoInfoDto {
     private String id;
@@ -10,5 +12,5 @@ public class YoutubeVideoInfoDto {
 
     private String description;
 
-    private String publishDate;
+    private Date publishDate;
 }

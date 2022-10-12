@@ -8,6 +8,7 @@ import org.tog.togmobilemediaservice.enums.Production;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.util.Date;
 
 @Entity(name = "youtube_video_info")
 @Data
@@ -25,5 +26,5 @@ public class YouTubeVideoInfo {
     private String description;
 
     @Column(name = "publish_date")
-    private String publishDate;
+    private Date publishDate;
 }

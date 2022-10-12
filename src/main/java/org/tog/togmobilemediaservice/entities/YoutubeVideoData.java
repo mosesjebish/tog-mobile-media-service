@@ -1,14 +1,16 @@
 package org.tog.togmobilemediaservice.entities;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Entity(name = "youtube_video_data")
-@Data
+@Getter
+@Setter
 @EqualsAndHashCode
 public class YoutubeVideoData {
     @Id

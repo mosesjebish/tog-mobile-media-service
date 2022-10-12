@@ -1,12 +1,14 @@
 package org.tog.togmobilemediaservice.controller;
 
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.web.bind.annotation.*;
+import org.tog.togmobilemediaservice.dto.VideoRequestDto;
 import org.tog.togmobilemediaservice.dto.YoutubeVideoDataDto;
 import org.tog.togmobilemediaservice.dto.YoutubeVideoInfoDto;
-import org.tog.togmobilemediaservice.dto.YoutubeSearchRequestDto;
 import org.tog.togmobilemediaservice.service.VideoService;
 
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -20,14 +22,18 @@ public class YoutubeController {
     }
 
     @PostMapping(value = "/search")
-    public List<YoutubeVideoInfoDto> search(@RequestBody YoutubeSearchRequestDto youtubeSearchRequestDto) {
-        List<YoutubeVideoInfoDto> youTubeVideoInfoList = videoService.search(youtubeSearchRequestDto);
+    @ApiResponse(responseCode = "200", description = "Searches and updates the video list from BAG youtube channel", content = @Content(mediaType = "application/json", schema = @Schema(implementation = YoutubeVideoInfoDto.class)))
+    @ApiResponse(responseCode = "500", description = "Internal Error")
+    public List<YoutubeVideoInfoDto> search(@RequestBody VideoRequestDto videoRequestDto) {
+        List<YoutubeVideoInfoDto> youTubeVideoInfoList = videoService.search(videoRequestDto);
        return youTubeVideoInfoList;
     }
 
     @PostMapping(value = "/data")
-    public List<YoutubeVideoDataDto> data(@RequestBody YoutubeSearchRequestDto youtubeSearchRequestDto) {
-        List<YoutubeVideoDataDto> youtubeVideoDataDtos = videoService.fetchVideoData(Collections.EMPTY_LIST);
+    @ApiResponse(responseCode = "200", description = "Connects with YoutubeAPI and populates exhaustive list of data in database", content = @Content(mediaType = "application/json", schema = @Schema(implementation = YoutubeVideoDataDto.class)))
+    @ApiResponse(responseCode = "500", description = "Internal Error")
+    public List<YoutubeVideoDataDto> data(@RequestBody VideoRequestDto videoRequestDto) throws Exception {
+        List<YoutubeVideoDataDto> youtubeVideoDataDtos = videoService.fetchVideoData(videoRequestDto);
         return youtubeVideoDataDtos;
     }
 }
