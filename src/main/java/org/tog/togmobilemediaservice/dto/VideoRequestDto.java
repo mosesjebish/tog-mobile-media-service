@@ -1,9 +1,12 @@
 package org.tog.togmobilemediaservice.dto;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class VideoRequestDto {
+    private String category;
     private String fromDate;
     private String toDate;
 }

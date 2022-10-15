@@ -1,5 +1,5 @@
 package org.tog.togmobilemediaservice.enums;
 
-public enum VideoCategories {
+public enum VideoCategoriesEnum {
     DOCTRINAL, EMOTIONAL, BEHAVIOURAL, SPIRITUAL
 }

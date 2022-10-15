@@ -4,13 +4,15 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Getter
 @Setter
 public class YoutubeVideoDataDto {
     private String id;
     private String title;
     private String description;
-    private String publishedAt;
+    private Date publishedAt;
     private String videoUrl;
     private String thumbnailDefault;
     private String thumbnailMax;

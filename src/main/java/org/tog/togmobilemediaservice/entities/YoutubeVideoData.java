@@ -7,6 +7,7 @@ import lombok.Setter;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.util.Date;
 
 @Entity(name = "youtube_video_data")
 @Getter
@@ -23,8 +24,8 @@ public class YoutubeVideoData {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "publishedAt")
-    private String publishedAt;
+    @Column(name = "published_at")
+    private Date publishedAt;
 
     @Column(name = "video_url")
     private String videoUrl;
