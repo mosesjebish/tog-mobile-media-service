@@ -45,7 +45,7 @@ public class YoutubeServiceImpl implements YoutubeService{
             }
 
             if(to != null){
-                search.setPublishedAfter(to);
+                search.setPublishedBefore(to);
             }
 
             //perform the search and parse the results

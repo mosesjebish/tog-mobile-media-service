@@ -1,11 +1,12 @@
 package org.tog.togmobilemediaservice.service;
 
-import com.google.api.client.util.DateTime;
 import com.google.api.client.util.Lists;
 import com.google.common.base.Strings;
-import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.ISODateTimeFormat;
 import org.mapstruct.factory.Mappers;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.tog.togmobilemediaservice.dao.YoutubeVideoDataDao;
 import org.tog.togmobilemediaservice.dao.YoutubeVideoInfoDao;
@@ -14,12 +15,16 @@ import org.tog.togmobilemediaservice.dto.YoutubeVideoDataDto;
 import org.tog.togmobilemediaservice.dto.YoutubeVideoInfoDto;
 import org.tog.togmobilemediaservice.entities.YouTubeVideoInfo;
 import org.tog.togmobilemediaservice.entities.YoutubeVideoData;
+import org.tog.togmobilemediaservice.exceptions.MediaServiceException;
 import org.tog.togmobilemediaservice.external.YoutubeService;
 import org.tog.togmobilemediaservice.mapper.YoutubeVideoDataMapper;
 import org.tog.togmobilemediaservice.mapper.YoutubeVideoInfoMapper;
 
+import javax.print.attribute.standard.Media;
 import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
@@ -43,14 +48,14 @@ public class VideoServiceImpl implements VideoService {
 
 
     @Override
-    public List<YoutubeVideoInfoDto> search(VideoRequestDto videoRequestDto) {
-        List<YouTubeVideoInfo> entities = infoMapper.mapDtosToEntities(youtubeService.searchVideosByDate(getDate(videoRequestDto.getFromDate()), getDate(videoRequestDto.getToDate())));
+    public List<YoutubeVideoInfoDto> search(VideoRequestDto videoRequestDto) throws MediaServiceException {
+        List<YouTubeVideoInfo> entities = infoMapper.mapDtosToEntities(youtubeService.searchVideosByDate(getRfc3339Date(videoRequestDto.getFromDate()), getRfc3339Date(videoRequestDto.getToDate())));
 
         return infoMapper.mapEntitiesToDtos(Lists.newArrayList(infoDao.saveAll(entities)));
     }
 
     @Override
-    public List<YoutubeVideoDataDto> fetchVideoData(VideoRequestDto videoRequestDto) throws Exception {
+    public List<YoutubeVideoDataDto> fetchVideoData(VideoRequestDto videoRequestDto) throws MediaServiceException {
         Iterable<YouTubeVideoInfo> infoEntities = getYouTubeVideoInfos(videoRequestDto);
 
         List<YoutubeVideoInfoDto> infoDtos = infoMapper.mapEntitiesToDtos(Lists.newArrayList(infoEntities));
@@ -61,7 +66,7 @@ public class VideoServiceImpl implements VideoService {
         return dataMapper.mapEntitiesToDtos(Lists.newArrayList(dataDao.saveAll(dataEntities)));
     }
 
-    private Iterable<YouTubeVideoInfo> getYouTubeVideoInfos(VideoRequestDto videoRequestDto) throws Exception {
+    private Iterable<YouTubeVideoInfo> getYouTubeVideoInfos(VideoRequestDto videoRequestDto) throws MediaServiceException {
         Iterable<YouTubeVideoInfo> infoEntities;
         if(Strings.isNullOrEmpty(videoRequestDto.getFromDate())  && Strings.isNullOrEmpty(videoRequestDto.getToDate())){
             infoEntities = infoDao.findAll();
@@ -77,11 +82,11 @@ public class VideoServiceImpl implements VideoService {
                 videoRequestDto.setToDate(formatter.format(date));
             }
 
-            Date fromDate = new Date(getDate(videoRequestDto.getFromDate()).getValue());
-            Date toDate = new Date(getDate(videoRequestDto.getToDate()).getValue());
+            Date fromDate = new Date(getRfc3339Date(videoRequestDto.getFromDate()).getValue());
+            Date toDate = new Date(getRfc3339Date(videoRequestDto.getToDate()).getValue());
 
             if (fromDate.after(toDate)) {
-                throw new Exception("Invalid Date Time");
+                throw new MediaServiceException(HttpStatus.BAD_REQUEST.value(),"Invalid from/to date");
             }
 
             infoEntities = infoDao.getAllBetweenDates(fromDate,toDate);
@@ -89,11 +94,24 @@ public class VideoServiceImpl implements VideoService {
         return infoEntities;
     }
 
-    private static DateTime getDate(String date) {
+    private static com.google.api.client.util.DateTime getRfc3339Date(String date) throws MediaServiceException {
         if(Strings.isNullOrEmpty(date)){
             return null;
         }
-        DateTime dateTime = new DateTime(date);
-        return dateTime;
+
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate dateTime = LocalDate.parse(date, formatter);
+
+            DateTime dt = new DateTime(dateTime.getYear(),dateTime.getMonthValue(),dateTime.getDayOfMonth(),0,0,0,0, DateTimeZone.UTC);
+            org.joda.time.format.DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
+            String outRfc = fmt.print(dt);
+
+            return com.google.api.client.util.DateTime.parseRfc3339(outRfc);
+        }
+        catch (Exception e){
+            throw new MediaServiceException(HttpStatus.BAD_REQUEST.value(),"Invalid date format. Expected format yyyy-mm-dd");
+        }
+
     }
 }
