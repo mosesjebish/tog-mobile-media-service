@@ -106,13 +106,11 @@ public class VideoServiceImpl implements VideoService {
         }
         else {
             if(Strings.isNullOrEmpty(videoRequestDto.getFromDate())){
-                videoRequestDto.setFromDate("1990-01-01T12:00:00Z");
+                videoRequestDto.setFromDate("1990-01-01");
             }
 
             if(Strings.isNullOrEmpty(videoRequestDto.getToDate())){
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-ddTHH:mm:ssZ");
-                Date date = new Date();
-                videoRequestDto.setToDate(formatter.format(date));
+                videoRequestDto.setToDate(LocalDate.now().toString());
             }
 
             Date fromDate = new Date(getRfc3339Date(videoRequestDto.getFromDate()).getValue());
@@ -135,13 +133,11 @@ public class VideoServiceImpl implements VideoService {
         }
         else {
             if(Strings.isNullOrEmpty(youtubeVideoRequestDto.getFromDate())){
-                youtubeVideoRequestDto.setFromDate("1990-01-01T12:00:00Z");
+                youtubeVideoRequestDto.setFromDate("1990-01-01");
             }
 
             if(Strings.isNullOrEmpty(youtubeVideoRequestDto.getToDate())){
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-ddTHH:mm:ssZ");
-                Date date = new Date();
-                youtubeVideoRequestDto.setToDate(formatter.format(date));
+                youtubeVideoRequestDto.setToDate(LocalDate.now().toString());
             }
 
             Date fromDate = new Date(getRfc3339Date(youtubeVideoRequestDto.getFromDate()).getValue());

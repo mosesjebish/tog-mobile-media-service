@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 public class VideoRequestDto {
     private String category;
+    private String tags;
     private String fromDate;
     private String toDate;
 }
